@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  server:
+    build: .
+    ports:
+      - "8080:8080"
+    networks:
+      - webnet
+  
+  prometheus:
+    image: prom/prometheus:v2.40.7
+    networks:
+      - webnet
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+  
+  grafana:
+    image: grafana/grafana:9.4.2
+    networks:
+      - webnet
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/config.ini:/etc/grafana/grafana.ini
+      - ./grafana/datasource.yml:/etc/grafana/provisioning/datasources/default.yaml
+      - ./grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/default.yaml
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+
+networks:
+  webnet:
